@@ -2,253 +2,353 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Bảo tàng AI Nhí - Khám phá 13 vị vua triều Nguyễn qua công nghệ nhận diện hình ảnh AI. Dành cho các bạn nhỏ yêu lịch sử." />
-  <title>Bảo tàng AI Nhí – 13 Vị Vua Triều Nguyễn ✨</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BẢO TÀNG AI TRIỀU NGUYỄN</title>
 
-  <!-- Thư viện AI TensorFlow & Teachable Machine -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
-  <script defer src="https://unpkg.com/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
-  <script defer src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --royal-blue: #1A365D;
+      --royal-gold: #D4AF37;
+      --soft-gold: #FFD700;
+      --jade: #4FD1C5;
+      --lotus: #FFB7B2;
+      --paper: #FFFDF5;
+      --glass: rgba(255, 255, 255, 0.95);
+      --wood: #5D4037;
+      --radius: 35px;
+    }
+
+    * { box-sizing: border-box; outline: none; }
+    body { 
+      margin: 0; font-family: 'Quicksand', sans-serif; color: #2D3748; 
+      background: linear-gradient(135deg, #F4F1EA 0%, #E9D8FD 100%);
+      min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ----- LANDING PAGE ----- */
+    #landing-page {
+      position: fixed; inset: 0; background: radial-gradient(circle at center, #2A4365, #1A365D);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999; transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    #landing-page.hidden { transform: translateY(-100%); }
+    .landing-mascot { font-size: 110px; animation: bounce 2s infinite alternate; margin-bottom: 20px; }
+    .landing-title { font-family: 'Pattaya', sans-serif; font-size: 4.5rem; color: var(--soft-gold); margin: 0 0 30px 0; text-align: center; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .btn-explore {
+      background: var(--soft-gold); color: var(--wood); font-size: 1.8rem; font-weight: 800; padding: 25px 80px;
+      border: 8px solid #FFF; border-radius: 100px; cursor: pointer; box-shadow: 0 12px 0 #B8860B; transition: 0.2s;
+    }
+    .btn-explore:active { transform: translateY(10px); box-shadow: 0 0 0 #B8860B; }
+
+    /* ----- MAIN LAYOUT ----- */
+    .wrap { width: 98%; margin: 0 auto; padding: 20px; display: none; }
+    .wrap.active { display: block; animation: fadeIn 0.8s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .header {
+      background: var(--glass); backdrop-filter: blur(10px); border-radius: 30px; padding: 15px 40px; 
+      margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; border: 3px solid #FFF; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .title-text { font-family: 'Pattaya', sans-serif; font-size: 2.2rem; color: var(--royal-blue); }
+    .progress-box { width: 400px; text-align: right; }
+    .pb-bg { height: 22px; background: #EDF2F7; border-radius: 50px; overflow: hidden; border: 2px solid #E2E8F0; margin-top: 5px;}
+    .pb-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--soft-gold), var(--royal-gold)); transition: width 1s ease; }
+
+    .grid { display: grid; grid-template-columns: 480px 1fr; gap: 40px; align-items: start; }
+
+    /* LEFT: STICKY CAMERA */
+    .camera-card {
+      background: #FFF; border-radius: 40px; padding: 25px; position: sticky; top: 20px;
+      border: 2px solid #E2E8F0; box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+    }
+    .camera-wrap {
+      position: relative; border-radius: 35px; overflow: hidden; aspect-ratio: 1/1; 
+      border: 10px solid #FDF0A3; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .scanner.active { display: block; position: absolute; inset: 0; border: 5px solid var(--royal-gold); border-radius: 25px; pointer-events: none; }
+    .scanner-line { position: absolute; width: 100%; height: 4px; background: var(--jade); box-shadow: 0 0 20px var(--jade); animation: scan 3s infinite; }
+    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+    
+    /* Status under camera */
+    .status-box { 
+        margin-top: 20px; padding: 18px; border-radius: 15px; 
+        background: #F7FAFC; font-weight: 700; text-align: center; 
+        border: 3px dashed var(--jade); color: var(--wood); line-height: 1.6;
+    }
+    .status-playing { color: var(--accent); font-weight: 800; animation: pulse 1.5s infinite; display: block; margin-top: 5px;}
+
+    /* RIGHT: CONTENT CARD */
+    .info-card {
+      background: var(--paper); border-radius: 40px; padding: 40px; min-height: 850px;
+      border: 5px solid #FFF; box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+    }
+    .tabs-header { display: flex; gap: 15px; margin-bottom: 35px; }
+    .tab-btn {
+      flex: 1; padding: 18px; border: none; border-radius: 15px; background: #FFF; 
+      color: var(--muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+      box-shadow: 0 5px 0 #E2E8F0;
+    }
+    .tab-btn.active { background: var(--royal-gold); color: #FFF; box-shadow: 0 5px 0 #B8860B; transform: translateY(-3px); }
+
+    .tab-content { display: none; animation: slideIn 0.5s ease; }
+    .tab-content.active { display: block; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    .king-name { font-family: 'Pattaya', sans-serif; font-size: 3.8rem; color: var(--wood); margin: 0; }
+    .desc-box { 
+        font-size: 1.3rem; line-height: 2.2; color: #4A5568; background: #FFF; 
+        padding: 35px; border-radius: 25px; border-left: 12px solid var(--royal-gold); 
+        white-space: pre-line; box-shadow: 0 10px 30px rgba(0,0,0,0.02); 
+    }
+
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    .yt-box { width: 100%; aspect-ratio: 16/9; border-radius: 20px; border: 8px solid #FFF; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    
+    .quiz-item { background: #FFF; border-radius: 25px; padding: 30px; margin-bottom: 25px; border: 1px solid #E2E8F0; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
+    .quiz-q { font-size: 1.3rem; font-weight: 800; color: var(--royal-blue); margin-bottom: 20px; line-height: 1.5; }
+    .quiz-opts { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .quiz-opt-btn { width: 100%; text-align: left; padding: 18px; border-radius: 15px; border: 2px solid #F7FAFC; background: #F7FAFC; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .quiz-opt-btn:hover:not(:disabled) { border-color: var(--jade); background: #FFF; }
+    .quiz-opt-btn.correct { background: #C6F6D5; border-color: #48BB78; color: #22543D; }
+    .quiz-opt-btn.wrong { background: #FED7D7; border-color: #F56565; color: #742A2A; }
+    .quiz-feedback { margin-top: 15px; font-weight: 800; font-size: 1.1rem; }
+
+    .speaker-icon { font-size: 40px; display: none; margin-left: 20px; vertical-align: middle; cursor: pointer; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .placeholder-text { text-align: center; padding: 150px 0; color: #A0AEC0; font-weight: 700; font-size: 1.6rem; border: 4px dashed #E2E8F0; border-radius: 30px; }
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+  </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════
-     LOADING OVERLAY – Hiện khi đang tải model AI
-     ══════════════════════════════════════════════════ -->
-<div id="loadingOverlay">
-  <div class="loading-dragon">🐉</div>
-  <div class="loading-text">Bảo tàng AI Nhí</div>
-  <div class="loading-sub">Đang triệu hồi 13 vị vua triều Nguyễn…</div>
-  <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
-</div>
-
-<!-- ══════════════════════════════════════════════════
-     STICKY NAVBAR
-     ══════════════════════════════════════════════════ -->
-<nav class="navbar">
-  <a href="#section-hero" class="nav-logo">
-    <span class="nav-logo-icon">🐉</span>
-    <span class="nav-logo-text">Bảo tàng AI Nhí</span>
-  </a>
-
-  <button class="nav-hamburger" id="hamburger" aria-label="Menu">☰</button>
-
-  <div class="nav-links">
-    <a href="#section-hero"    class="nav-link">🏛️ Trang chủ</a>
-    <a href="#section-scanner" class="nav-link">📷 Máy ảnh</a>
-    <a href="#section-scanner" class="nav-link" id="navCollection">
-      👑 Bộ sưu tập
-    </a>
-    <a href="#section-guide"   class="nav-link">❓ Hướng dẫn</a>
+  <div id="landing-page">
+    <div class="landing-mascot">🏛️</div>
+    <h1 class="landing-title">BẢO TÀNG AI<br>TRIỀU NGUYỄN</h1>
+    <button class="btn-explore" id="btn-explore-start">KHÁM PHÁ NGAY ✨</button>
   </div>
 
-  <div class="nav-progress">
-    <span class="nav-progress-label">👑 0/13</span>
-    <div class="nav-progress-bar">
-      <div class="nav-progress-fill" style="width:0%"></div>
-    </div>
-  </div>
-</nav>
-
-<!-- ══════════════════════════════════════════════════
-     HERO SECTION – Landing Page
-     ══════════════════════════════════════════════════ -->
-<section id="section-hero">
-  <div class="hero-bg"></div>
-  <div class="hero-pattern"></div>
-  <div class="hero-content">
-    <span class="hero-badge">✨ Công nghệ AI × Lịch sử Việt Nam</span>
-    <h1 class="hero-title">Bảo tàng AI Nhí<br>🐉 Triều Nguyễn</h1>
-    <p class="hero-sub">Chào mừng bé đến với hành trình khám phá <strong>13 vị vua triều Nguyễn</strong>!<br>Đưa ảnh vua vào "Máy ảnh bảo tàng" để nghe kể chuyện lịch sử thú vị nhé! ✨</p>
-
-    <!-- 13 biểu tượng vua -->
-    <div class="hero-kings" aria-hidden="true">
-      <div class="hero-king-icon" title="Gia Long">👑</div>
-      <div class="hero-king-icon" title="Minh Mạng">📜</div>
-      <div class="hero-king-icon" title="Thiệu Trị">🌸</div>
-      <div class="hero-king-icon" title="Tự Đức">📚</div>
-      <div class="hero-king-icon" title="Dục Đức">🕊️</div>
-      <div class="hero-king-icon" title="Hiệp Hòa">⚖️</div>
-      <div class="hero-king-icon" title="Kiến Phúc">🌟</div>
-      <div class="hero-king-icon" title="Hàm Nghi">🦅</div>
-      <div class="hero-king-icon" title="Đồng Khánh">🏯</div>
-      <div class="hero-king-icon" title="Thành Thái">🌿</div>
-      <div class="hero-king-icon" title="Duy Tân">⚡</div>
-      <div class="hero-king-icon" title="Khải Định">🏛️</div>
-      <div class="hero-king-icon" title="Bảo Đại">🌅</div>
+  <div class="wrap" id="main-wrap">
+    <div class="header">
+      <div class="title-text">🏯 Bảo tàng AI Triều Nguyễn</div>
+      <div class="progress-box">
+        <div id="discoveryText" style="font-weight:800; font-size:1.1rem">Khám phá: 0/13 vị vua</div>
+        <div class="pb-bg"><div id="discoveryBar" class="pb-fill"></div></div>
+      </div>
     </div>
 
-    <button class="hero-btn" id="heroBtnExplore">
-      🔍 Khám phá ngay
-    </button>
-    <p class="hero-scroll-hint">↓ Cuộn xuống để bắt đầu ↓</p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════
-     HƯỚNG DẪN (anchor target)
-     ══════════════════════════════════════════════════ -->
-<section id="section-guide" style="padding:24px;max-width:860px;margin:0 auto;display:none"></section>
-
-<!-- ══════════════════════════════════════════════════
-     AI SCANNER SECTION – Khu vực nhận diện chính
-     ══════════════════════════════════════════════════ -->
-<section id="section-scanner">
-  <div class="section-header">
-    <h2 class="section-title">📷 Máy ảnh Bảo tàng AI</h2>
-    <p class="section-desc">Đưa ảnh vị vua hoặc lăng tẩm vào khung camera để AI nhận diện và kể chuyện!</p>
-  </div>
-
-  <div class="scanner-grid">
-
-    <!-- ═══ CỘT TRÁI: CAMERA PANEL ═══ -->
-    <div class="camera-card">
-      <div class="camera-card-title">📷 Máy ảnh Bảo tàng</div>
-
-      <!-- Nút điều khiển chính -->
-      <div class="cam-controls" style="margin-top:14px">
-        <button class="btn btn-start" id="btnStart">▶️ Bắt đầu</button>
-        <button class="btn btn-stop"  id="btnStop"  disabled>⏹️ Dừng</button>
-        <button class="btn btn-reset" id="btnReset">🔄 Quét lại</button>
-      </div>
-
-      <!-- Chọn camera (trước/sau trên điện thoại) -->
-      <div class="cam-controls">
-        <select class="cam-select" id="camSelect" title="Chọn camera">
-          <option value="">📷 Camera mặc định</option>
-        </select>
-      </div>
-
-      <!-- Khung video – trang trí như máy ảnh bảo tàng -->
-      <div class="camera-wrap">
-        <!-- iOS: phải có playsinline + muted + autoplay -->
-        <video id="videoEl" autoplay playsinline muted></video>
-        <canvas id="canvas" width="400" height="400"></canvas>
-
-        <!-- Hiệu ứng quét scanner -->
-        <div class="scanner-overlay" id="scannerOverlay">
-          <div class="scanner-frame"></div>
-          <div class="scanner-line"></div>
+    <div class="grid">
+      <div class="camera-card">
+        <div class="camera-wrap">
+          <video id="webcam" autoplay playsinline muted></video>
+          <div class="scanner" id="scanner"><div class="scanner-line"></div></div>
+        </div>
+        <div id="status" class="status-box">Vui lòng đưa ảnh Vua vào Gương Thần nhé! 📥</div>
+        <div style="display:flex; gap:12px; margin-top:25px">
+            <button id="btnStart" style="flex:2; background:var(--jade); color:#FFF; border-radius:15px; font-weight:800; padding:18px; border:none; cursor:pointer">MỞ GƯƠNG THẦN</button>
+            <button onclick="location.reload()" style="flex:1; background:var(--lotus); color:#FFF; border-radius:15px; font-weight:800; border:none; cursor:pointer">RESET</button>
         </div>
       </div>
 
-      <!-- Thông báo khi bị từ chối camera -->
-      <div class="cam-permission-msg" id="permMsg"></div>
-
-      <!-- Status box -->
-      <div class="status-box" id="statusBox">
-        Hệ thống đang chờ bé bấm "Bắt đầu" nhé! 🎯
-      </div>
-
-      <!-- Progress bar nhận diện -->
-      <div class="detect-prog-wrap" id="detectProgWrap">
-        <div class="detect-prog-label" id="detectProgLabel">Đang xác nhận…</div>
-        <div class="detect-prog-bar">
-          <div class="detect-prog-fill" id="detectProgFill"></div>
-        </div>
-      </div>
-
-      <!-- Confidence của camera -->
-      <div class="confidence-pill" id="confidencePillCam" style="margin-top:10px">
-        🔍 AI đang sẵn sàng…
-      </div>
-
-      <p class="cam-tip">💡 Mẹo: Giữ ảnh thật im, đủ sáng và chiếm hết khung hình nhé!</p>
-    </div>
-    <!-- ═══ KẾT THÚC CỘT TRÁI ═══ -->
-
-
-    <!-- ═══ CỘT PHẢI: INFO CARD VỚI 3 TABS ═══ -->
-    <div class="info-card" id="infoCard">
-      <span class="info-card-pin">📌</span>
-
-      <!-- Placeholder khi chưa nhận diện -->
-      <div class="info-placeholder" id="placeholder">
-        <div class="info-placeholder-icon">🔮</div>
-        <p class="info-placeholder-text">
-          Đưa ảnh vị vua vào camera để AI nhận diện và hiển thị thông tin lịch sử thú vị nhé!<br><br>
-          <strong>Độ chính xác cần ≥ 92%</strong> để mở khoá thông tin.
-        </p>
-      </div>
-
-      <!-- Nội dung vua (ẩn ban đầu) -->
-      <div class="king-info-content" style="display:none">
-
-        <!-- Header: Tên vua + confidence -->
-        <div class="info-header">
-          <div class="king-name-display" id="kingNameDisplay">
-            👑 <span id="kingBadge" class="king-badge"></span>
-          </div>
-          <span class="years-tag" id="yearsTag">⏳</span>
-          <br>
-          <span class="confidence-pill" id="confidencePill">🎯 –</span>
+      <div class="info-card">
+        <div class="tabs-header">
+          <button id="btn-tab-story" class="tab-btn active" onclick="switchTab('story')">📖 Câu Chuyện</button>
+          <button id="btn-tab-video" class="tab-btn" onclick="switchTab('video')">🎬 Thước Phim</button>
+          <button id="btn-tab-quiz" class="tab-btn" onclick="switchTab('quiz')">🎮 Thử Thách</button>
         </div>
 
-        <!-- Ảnh đại diện vua -->
-        <div class="king-img-wrap" id="kingImgWrap">
-          <div class="king-frame">
-            <img id="kingMainImg" class="king-img" src="" alt="Hình ảnh vị vua" />
+        <div id="tab-story" class="tab-content active">
+          <div id="story-placeholder" class="placeholder-text">Đang chờ bạn tìm kiếm mảnh ghép lịch sử... 🔮</div>
+          <div id="story-data" style="display:none">
+              <div style="display:flex; align-items:center; margin-bottom:25px">
+                <h2 class="king-name" id="artifactName">Tên Vua</h2>
+                <span class="speaker-icon" id="audioIndicator" style="animation: pulse 1s infinite;" onclick="replayAudio()">🔊</span>
+              </div>
+              <div class="desc-box" id="desc">Nội dung...</div>
+              <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
           </div>
         </div>
 
-        <!-- TABS NAVIGATION -->
-        <div class="tabs-nav">
-          <button class="tab-btn active" data-tab="tab-suly">📜 Sử liệu</button>
-          <button class="tab-btn" data-tab="tab-ditich">🏯 Di tích</button>
-          <button class="tab-btn" data-tab="tab-quiz">🧠 Trắc nghiệm</button>
+        <div id="tab-video" class="tab-content">
+            <div id="video-list-container" class="video-grid"></div>
         </div>
 
-        <!-- TAB 1: SỬ LIỆU -->
-        <div class="tab-panel active" id="tab-suly">
-          <div class="desc-box" id="descBox">
-            Đang tải nội dung…
-          </div>
-          <div class="audio-controls">
-            <button class="btn btn-audio" id="btnReplay">🎧 Nghe lại</button>
-          </div>
-          <!-- Timeline 13 vua -->
-          <div class="timeline-box">
-            <div class="tl-top">
-              <span class="tl-title" id="tlTitle">Triều Nguyễn</span>
-              <span class="tl-meta" id="tlMeta">13 vị vua</span>
-            </div>
-            <div class="tl-nodes" id="tlNodes"></div>
-          </div>
+        <div id="tab-quiz" class="tab-content">
+            <h3 style="color:var(--royal-blue); margin-bottom:20px;">🧩 Thử tài trí nhớ: Bốc ngẫu nhiên 5 câu đố</h3>
+            <div id="quiz-list-container"></div>
         </div>
-
-        <!-- TAB 2: DI TÍCH (VIDEO + ẢNH) -->
-        <div class="tab-panel" id="tab-ditich">
-          <div class="video-wrap" id="videoWrap"></div>
-          <div class="relic-imgs" id="relicImgs"></div>
-        </div>
-
-        <!-- TAB 3: TRẮC NGHIỆM -->
-        <div class="tab-panel" id="tab-quiz">
-          <p class="quiz-question" id="quizQ">Đang tải câu hỏi…</p>
-          <div class="quiz-opts" id="quizOpts"></div>
-          <div class="quiz-footer">
-            <span class="quiz-feedback" id="quizFeedback"></span>
-            <button class="btn-next-q" id="btnNextQ">Câu mới ➡️</button>
-          </div>
-        </div>
-
-      </div>
-      <!-- /king-info-content -->
-
-      <!-- Hành động -->
-      <div class="action-row">
-        <button class="btn btn-reset" onclick="document.getElementById('btnReset').click()">🔄 Quét lại</button>
       </div>
     </div>
-    <!-- ═══ KẾT THÚC CỘT PHẢI ═══ -->
-
   </div>
-  <!-- /scanner-grid -->
 
-</section>
-<!-- /section-scanner -->
+  <script>
+    const AUDIO_DIR = "./audio/";
+    const COLAB_CLASSES = ['BẢO ĐẠI', 'DUY TÂN', 'DỤC ĐỨC', 'GIA LONG', 'HÀM NGHI', 'HIỆP HÒA', 'KHẢI ĐỊNH', 'KIẾN PHÚC', 'LĂNG VUA GIA LONG', 'LĂNG VUA MINH MẠNG', 'LĂNG VUA TỰ ĐỨC', 'MINH MẠNG', 'THÀNH THÁI', 'THIỆU TRỊ', 'TỰ ĐỨC', 'ĐỒNG KHÁNH'];
+    
+    // --- KHO TIỂU SỬ CHI TIẾT ---
+    const kingData = {
+      "GIA LONG": {
+        desc: "Vua Gia Long (Nguyễn Phúc Ánh) là vị hoàng đế khai sáng, người đã dành hơn 20 năm bôn ba gian khổ để thống nhất sơn hà và sáng lập nên triều đại nhà Nguyễn – triều đại phong kiến cuối cùng của dân tộc Việt Nam vào năm 1802.\n\nĐiểm rực rỡ nhất trong sự nghiệp của ông là vào năm 1804, ông chính thức đặt quốc hiệu nước ta là VIỆT NAM. Đây là một cột mốc thiêng liêng, khẳng định chủ quyền của dân tộc. Với tầm nhìn của một nhà quân sự lỗi lạc, ông đã chọn vùng đất Phú Xuân (Huế) thơ mộng làm kinh đô và tự tay khởi công xây dựng Kinh thành Huế hùng vĩ, vĩ đại mà ngày nay chúng ta vẫn được chiêm ngưỡng.\n\nVua Gia Long không chỉ giỏi cầm quân mà còn rất quan tâm đến luật pháp. Ông ban hành bộ luật Gia Long nổi tiếng để giúp xã hội ổn định, đất nước đi vào nề nếp. Câu chuyện về Vua Gia Long chính là bài học lớn lao về lòng kiên trì và ý chí sắt đá: Dù gặp hàng vạn nghịch cảnh, chỉ cần bạn giữ vững niềm tin và không bao giờ bỏ cuộc, thành công nhất định sẽ mỉm cười!",
+        videos: ["https://www.youtube.com/embed/zH0110z4Eic"]
+      },
+      "MINH MẠNG": {
+        desc: "Vua Minh Mạng là vị hoàng đế thứ hai của triều Nguyễn, được mệnh danh là một trong những vị vua tài giỏi, quyết đoán và chăm chỉ nhất lịch sử phong kiến Việt Nam.\n\nDưới thời trị vì lẫy lừng của ông, lãnh thổ Việt Nam đạt đến quy mô rộng lớn và hùng mạnh nhất trong khu vực. Ông là một nhà cải cách vĩ đại khi quyết định chia đất nước thành 31 tỉnh để dễ dàng quản lý, giúp cuộc sống người dân trở nên ổn định và văn minh hơn. Vua Minh Mạng nổi tiếng là người cực kỳ hiếu học, ông thường thức khuya dậy sớm để trực tiếp phê duyệt tấu chương và say mê nghiên cứu sách vở.\n\nÔng đã cho xây dựng Quốc Tử Giám tại Huế để đào tạo nhân tài và thường xuyên tổ chức các kỳ thi tài hoa để tìm người giỏi giúp nước. Lăng Minh Mạng do ông khởi công là một kiệt tác kiến trúc, nơi vẻ đẹp của những công trình đá chạm khắc tinh xảo hòa quyện hoàn hảo với cảnh sắc thiên nhiên sơn thủy hữu tình. Tấm gương của ông nhắc nhở chúng ta: Sự chăm chỉ rèn luyện và kiến thức uyên bác chính là chìa khóa vàng để xây dựng một tương lai rạng rỡ!",
+        videos: ["https://www.youtube.com/embed/p1pE_H5b5lM"]
+      },
+      "THIỆU TRỊ": { desc: "Vua Thiệu Trị là vị vua hiền hòa, nhân từ, nổi tiếng với tâm hồn nghệ sĩ và khả năng làm thơ tuyệt đỉnh. Ông giữ cho đất nước thái bình và để lại tập thơ 'Thần kinh nhị thập cảnh' ca ngợi vẻ đẹp của Huế.", videos: [] },
+      "TỰ ĐỨC": { desc: "Vua Tự Đức ở ngôi lâu nhất (36 năm), là tấm gương sáng ngời về lòng hiếu thảo với mẹ là bà Từ Dụ. Ông là một học giả uyên bác, thông thạo kinh sử và để lại di sản văn hóa vô cùng đồ sộ.", videos: [] },
+      "HÀM NGHI": { desc: "Vua Hàm Nghi là biểu tượng của tinh thần yêu nước bất khuất. Lên ngôi năm 13 tuổi, ông đã từ bỏ ngai vàng để ra chiến khu lãnh đạo phong trào Cần Vương chống Pháp, giữ vững khí tiết dân tộc.", videos: [] },
+      "DUY TÂN": { desc: "Lên ngôi năm 7 tuổi, vua Duy Tân là vị vua trẻ tuổi kiên cường. Năm 16 tuổi, ông đã bí mật lãnh đạo cuộc khởi nghĩa chống Pháp tại Huế. Tinh thần 'Tuổi nhỏ chí lớn' của ông là niềm tự hào dân tộc.", videos: [] },
+      "KHẢI ĐỊNH": { desc: "Vua Khải Định rất say mê mỹ thuật. Ông để lại Lăng Khải Định – một tuyệt tác nghệ thuật khảm sành sứ độc nhất vô nhị, kết hợp tinh hoa kiến trúc Đông - Tây đầy lộng lẫy.", videos: ["https://www.youtube.com/embed/01_T6T3Gg2E"] },
+      "BẢO ĐẠI": { desc: "Vua Bảo Đại là vị hoàng đế cuối cùng. Năm 1945, ông thoái vị để trở thành công dân một nước độc lập với câu nói nổi tiếng: 'Thà làm dân một nước tự do, còn hơn làm vua một nước nô lệ'.", videos: [] }
+      // Các vị vua khác hệ thống sẽ tự động hiển thị mô tả ngắn nếu chưa điền.
+    };
 
+    // --- NGÂN HÀNG CÂU HỎI (SOẠN MẪU CHO 13 VUA) ---
+    const quizBank = [
+        { king: "GIA LONG", q: "Vua Gia Long đặt tên nước ta là gì năm 1804?", a: "Việt Nam", ops: ["Đại Việt", "Việt Nam", "Đại Nam", "An Nam"] },
+        { king: "GIA LONG", q: "Ông chọn nơi nào làm kinh đô?", a: "Huế", ops: ["Hà Nội", "Huế", "Đà Lạt", "Sài Gòn"] },
+        { king: "MINH MẠNG", q: "Vua Minh Mạng chia nước ta thành mấy tỉnh?", a: "31 tỉnh", ops: ["13 tỉnh", "31 tỉnh", "64 tỉnh", "20 tỉnh"] },
+        { king: "TỰ ĐỨC", q: "Vị vua nào nổi tiếng hiếu thảo nhất?", a: "Vua Tự Đức", ops: ["Vua Gia Long", "Vua Tự Đức", "Vua Duy Tân", "Vua Bảo Đại"] },
+        { king: "DUY TÂN", q: "Vua Duy Tân lên ngôi lúc mấy tuổi?", a: "7 tuổi", ops: ["7 tuổi", "15 tuổi", "20 tuổi", "10 tuổi"] },
+        { king: "BẢO ĐẠI", q: "Vua Bảo Đại thoái vị năm nào?", a: "1945", ops: ["1930", "1945", "1954", "1975"] },
+        { king: "KHẢI ĐỊNH", q: "Lăng Khải Định nổi tiếng với nghệ thuật gì?", a: "Khảm sành sứ", ops: ["Đúc đồng", "Khảm sành sứ", "Chạm gỗ", "Sơn mài"] }
+        // Bảo có thể copy-paste thêm hàng trăm câu vào đây thoải mái nhé!
+    ];
+
+    let model, isRunning = false, currentAudio = null, isAudioPlaying = false;
+    let trackingLabel = "", stableCount = 0, lastCommittedKing = "";
+    let exploredKings = new Set();
+
+    // --- KHỞI ĐỘNG ---
+    window.onload = () => {
+        document.getElementById('btn-explore-start').onclick = startJourney;
+    };
+
+    function startJourney() {
+      document.getElementById('landing-page').classList.add('hidden');
+      document.getElementById('main-wrap').classList.add('active');
+      loadAIModel();
+      playAudio("intro", true);
+    }
+
+    function updateStatus(text, isPlaying) {
+        const box = document.getElementById('status');
+        isAudioPlaying = isPlaying;
+        if (isPlaying) {
+            box.innerHTML = `${text} <span class="status-playing">Đang thuyết minh kể chuyện... 🔊</span>`;
+        } else {
+            box.innerText = text;
+        }
+    }
+
+    async function loadAIModel() {
+      try {
+        model = await tf.loadGraphModel('./tfjs_graph_nguyen_dynasty/model.json');
+        updateStatus("Gương thần đã sẵn sàng! 🔮", false);
+      } catch (e) { updateStatus("Lỗi nạp AI!", false); }
+    }
+
+    document.getElementById('btnStart').onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        document.getElementById('webcam').srcObject = stream;
+        document.getElementById('btnStart').disabled = true;
+        document.getElementById('scanner').classList.add('active');
+        isRunning = true;
+        document.getElementById('webcam').onloadeddata = predictLoop;
+      } catch(e) { alert("Vui lòng cho phép Camera!"); }
+    };
+
+    async function predictLoop() {
+      if (!isRunning || !model) return;
+      tf.tidy(() => {
+        let img = tf.browser.fromPixels(document.getElementById('webcam'));
+        const size = Math.min(img.shape[0], img.shape[1]);
+        const center = tf.slice(img, [Math.floor((img.shape[0]-size)/2), Math.floor((img.shape[1]-size)/2), 0], [size, size, 3]);
+        const input = tf.image.resizeBilinear(center, [224, 224]).cast('float32').expandDims(0);
+        
+        const pred = model.predict(input);
+        const idx = pred.argMax(-1).dataSync()[0];
+        const conf = pred.max().dataSync()[0] * 100;
+        const label = COLAB_CLASSES[idx];
+
+        if (conf > 78) {
+            updateStatus(`✨ Đang thấy: ${label} (${conf.toFixed(0)}%)`, isAudioPlaying);
+            if (label === trackingLabel) stableCount++; else { trackingLabel = label; stableCount = 1; }
+            if (stableCount >= 10) {
+                let name = label.replace("LĂNG VUA ", "").replace("VUA ", "").trim();
+                if (name !== lastCommittedKing) { lastCommittedKing = name; triggerDiscovery(name); }
+            }
+        } else { 
+            stableCount = 0; 
+            updateStatus("Vui lòng đưa ảnh Vua vào Gương Thần nhé! 📥", isAudioPlaying);
+        }
+      });
+      requestAnimationFrame(predictLoop);
+    }
+
+    function triggerDiscovery(name) {
+      const data = kingData[name] || { desc: "Nhân vật đang được cập nhật tiểu sử...", videos: [] };
+      exploredKings.add(name);
+      
+      // Update UI
+      const count = exploredKings.size;
+      document.getElementById("discoveryText").innerText = `Khám phá: ${count}/13 mảnh ghép 👑`;
+      document.getElementById("discoveryBar").style.width = (count/13*100) + "%";
+      
+      document.getElementById('story-placeholder').style.display = "none";
+      document.getElementById('story-data').style.display = "block";
+      document.getElementById('artifactName').innerText = "VUA " + name;
+      document.getElementById('desc').innerText = data.desc;
+
+      switchTab('story');
+      playAudio(name, false);
+
+      // Render Video & Quiz (Bốc 5 câu)
+      document.getElementById('video-list-container').innerHTML = (data.videos || []).map(v => `<iframe class="yt-box" src="${v}" allowfullscreen></iframe>`).join('') || '<div class="placeholder-text">🎬 Phim tư liệu đang được cập nhật...</div>';
+      
+      const qList = quizBank.filter(q => q.king === name).sort(() => Math.random() - 0.5).slice(0, 5);
+      document.getElementById('quiz-list-container').innerHTML = qList.map((q, i) => `
+        <div class="quiz-item">
+          <div class="quiz-q">Câu ${i+1}: ${q.q}</div>
+          <div class="quiz-opts">${q.ops.map(o => `<button class="quiz-opt-btn" onclick="check(this, '${o}', '${q.a}')">${o}</button>`).join('')}</div>
+          <div class="quiz-feedback"></div>
+        </div>
+      `).join('') || '<div class="placeholder-text">🧩 Câu đố đang được soạn...</div>';
+    }
+
+    function switchTab(id) {
+      document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      document.getElementById('btn-tab-' + id).classList.add('active');
+    }
+
+    function check(btn, sel, cor) {
+      const fb = btn.parentElement.nextElementSibling;
+      btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+      if (sel === cor) { btn.classList.add('correct'); fb.innerText = "🌟 Giỏi quá!"; fb.style.color="#48BB78"; }
+      else { btn.classList.add('wrong'); fb.innerText = `💡 Đáp án là: ${cor}`; fb.style.color="#F56565"; }
+    }
+
+    function playAudio(name, isIntro) {
+      if (currentAudio) currentAudio.pause();
+      currentAudio = new Audio(AUDIO_DIR + (isIntro ? "intro.mp3" : name + ".mp3"));
+      currentAudio.onplay = () => {
+          isAudioPlaying = true;
+          document.getElementById('audioIndicator').style.display = "inline-block";
+      };
+      currentAudio.onended = () => {
+          isAudioPlaying = false;
+          document.getElementById('audioIndicator').style.display = "none";
+      };
+      currentAudio.play().catch(e => console.log("Audio block"));
+    }
+
+    function replayAudio() { if (currentAudio) currentAudio.play(); }
+  </script>
 </body>
 </html>
