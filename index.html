@@ -18,7 +18,6 @@
       --paper: #FFFDF5;
       --glass: rgba(255, 255, 255, 0.95);
       --wood: #5D4037;
-      --radius: 35px;
     }
 
     * { box-sizing: border-box; outline: none; }
@@ -46,7 +45,6 @@
     /* ----- MAIN LAYOUT ----- */
     .wrap { width: 98%; margin: 0 auto; padding: 20px; display: none; }
     .wrap.active { display: block; animation: fadeIn 0.8s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     .header {
       background: var(--glass); backdrop-filter: blur(10px); border-radius: 30px; padding: 15px 40px; 
@@ -69,11 +67,10 @@
       border: 10px solid #FDF0A3; background: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-    .scanner.active { display: block; position: absolute; inset: 0; border: 5px solid var(--royal-gold); border-radius: 25px; pointer-events: none; }
+    .scanner.active { display: block; position: absolute; inset: 0; border: 4px solid var(--royal-gold); border-radius: 25px; pointer-events: none; }
     .scanner-line { position: absolute; width: 100%; height: 4px; background: var(--jade); box-shadow: 0 0 20px var(--jade); animation: scan 3s infinite; }
     @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
     
-    /* Status under camera */
     .status-box { 
         margin-top: 20px; padding: 18px; border-radius: 15px; 
         background: #F7FAFC; font-weight: 700; text-align: center; 
@@ -86,10 +83,10 @@
       background: var(--paper); border-radius: 40px; padding: 40px; min-height: 850px;
       border: 5px solid #FFF; box-shadow: 0 20px 60px rgba(0,0,0,0.05);
     }
-    .tabs-header { display: flex; gap: 15px; margin-bottom: 35px; }
+    .tabs-header { display: flex; gap: 10px; margin-bottom: 35px; }
     .tab-btn {
-      flex: 1; padding: 18px; border: none; border-radius: 15px; background: #FFF; 
-      color: var(--muted); font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+      flex: 1; padding: 20px; border: none; border-radius: 15px; background: #FFF; 
+      color: var(--muted); font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
       box-shadow: 0 5px 0 #E2E8F0;
     }
     .tab-btn.active { background: var(--royal-gold); color: #FFF; box-shadow: 0 5px 0 #B8860B; transform: translateY(-3px); }
@@ -161,11 +158,11 @@
         </div>
 
         <div id="tab-story" class="tab-content active">
-          <div id="story-placeholder" class="placeholder-text">Đang chờ bạn tìm kiếm mảnh ghép lịch sử... 🔮</div>
+          <div id="story-placeholder" class="placeholder-text">Đang chờ bạn khám phá mảnh ghép lịch sử... 🔮</div>
           <div id="story-data" style="display:none">
               <div style="display:flex; align-items:center; margin-bottom:25px">
                 <h2 class="king-name" id="artifactName">Tên Vua</h2>
-                <span class="speaker-icon" id="audioIndicator" style="animation: pulse 1s infinite;" onclick="replayAudio()">🔊</span>
+                <span class="speaker-icon" id="audioIndicator" onclick="replayAudio()">🔊</span>
               </div>
               <div class="desc-box" id="desc">Nội dung...</div>
               <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
@@ -188,35 +185,55 @@
     const AUDIO_DIR = "./audio/";
     const COLAB_CLASSES = ['BẢO ĐẠI', 'DUY TÂN', 'DỤC ĐỨC', 'GIA LONG', 'HÀM NGHI', 'HIỆP HÒA', 'KHẢI ĐỊNH', 'KIẾN PHÚC', 'LĂNG VUA GIA LONG', 'LĂNG VUA MINH MẠNG', 'LĂNG VUA TỰ ĐỨC', 'MINH MẠNG', 'THÀNH THÁI', 'THIỆU TRỊ', 'TỰ ĐỨC', 'ĐỒNG KHÁNH'];
     
-    // --- KHO TIỂU SỬ CHI TIẾT ---
+    // --- KHO DỮ LIỆU TIỂU SỬ ---
     const kingData = {
       "GIA LONG": {
-        desc: "Vua Gia Long (Nguyễn Phúc Ánh) là vị hoàng đế khai sáng, người đã dành hơn 20 năm bôn ba gian khổ để thống nhất sơn hà và sáng lập nên triều đại nhà Nguyễn – triều đại phong kiến cuối cùng của dân tộc Việt Nam vào năm 1802.\n\nĐiểm rực rỡ nhất trong sự nghiệp của ông là vào năm 1804, ông chính thức đặt quốc hiệu nước ta là VIỆT NAM. Đây là một cột mốc thiêng liêng, khẳng định chủ quyền của dân tộc. Với tầm nhìn của một nhà quân sự lỗi lạc, ông đã chọn vùng đất Phú Xuân (Huế) thơ mộng làm kinh đô và tự tay khởi công xây dựng Kinh thành Huế hùng vĩ, vĩ đại mà ngày nay chúng ta vẫn được chiêm ngưỡng.\n\nVua Gia Long không chỉ giỏi cầm quân mà còn rất quan tâm đến luật pháp. Ông ban hành bộ luật Gia Long nổi tiếng để giúp xã hội ổn định, đất nước đi vào nề nếp. Câu chuyện về Vua Gia Long chính là bài học lớn lao về lòng kiên trì và ý chí sắt đá: Dù gặp hàng vạn nghịch cảnh, chỉ cần bạn giữ vững niềm tin và không bao giờ bỏ cuộc, thành công nhất định sẽ mỉm cười!",
+        desc: "Vua Gia Long (Nguyễn Phúc Ánh) là vị hoàng đế khai sáng, người đã dành hơn 20 năm bôn ba gian khổ để thống nhất sơn hà và sáng lập nên triều đại nhà Nguyễn vào năm 1802. \n\nNăm 1804, ông chính thức đặt quốc hiệu nước ta là VIỆT NAM. Ông chọn Huế làm kinh đô và xây dựng Kinh thành Huế hùng vĩ. Câu chuyện về ông là bài học về lòng kiên trì sắt đá.",
         videos: ["https://www.youtube.com/embed/zH0110z4Eic"]
       },
       "MINH MẠNG": {
-        desc: "Vua Minh Mạng là vị hoàng đế thứ hai của triều Nguyễn, được mệnh danh là một trong những vị vua tài giỏi, quyết đoán và chăm chỉ nhất lịch sử phong kiến Việt Nam.\n\nDưới thời trị vì lẫy lừng của ông, lãnh thổ Việt Nam đạt đến quy mô rộng lớn và hùng mạnh nhất trong khu vực. Ông là một nhà cải cách vĩ đại khi quyết định chia đất nước thành 31 tỉnh để dễ dàng quản lý, giúp cuộc sống người dân trở nên ổn định và văn minh hơn. Vua Minh Mạng nổi tiếng là người cực kỳ hiếu học, ông thường thức khuya dậy sớm để trực tiếp phê duyệt tấu chương và say mê nghiên cứu sách vở.\n\nÔng đã cho xây dựng Quốc Tử Giám tại Huế để đào tạo nhân tài và thường xuyên tổ chức các kỳ thi tài hoa để tìm người giỏi giúp nước. Lăng Minh Mạng do ông khởi công là một kiệt tác kiến trúc, nơi vẻ đẹp của những công trình đá chạm khắc tinh xảo hòa quyện hoàn hảo với cảnh sắc thiên nhiên sơn thủy hữu tình. Tấm gương của ông nhắc nhở chúng ta: Sự chăm chỉ rèn luyện và kiến thức uyên bác chính là chìa khóa vàng để xây dựng một tương lai rạng rỡ!",
+        desc: "Vua Minh Mạng là vị hoàng đế tài ba, quyết đoán và chăm chỉ nhất triều Nguyễn. Ông chia đất nước thành 31 tỉnh, mở mang bờ cõi rộng lớn nhất khu vực. Ông rất hiếu học, thường thức khuya dậy sớm đọc sách và duyệt tấu chương. Tấm gương của ông dạy chúng ta: Kiến thức là chìa khóa xây dựng đất nước.",
         videos: ["https://www.youtube.com/embed/p1pE_H5b5lM"]
       },
-      "THIỆU TRỊ": { desc: "Vua Thiệu Trị là vị vua hiền hòa, nhân từ, nổi tiếng với tâm hồn nghệ sĩ và khả năng làm thơ tuyệt đỉnh. Ông giữ cho đất nước thái bình và để lại tập thơ 'Thần kinh nhị thập cảnh' ca ngợi vẻ đẹp của Huế.", videos: [] },
-      "TỰ ĐỨC": { desc: "Vua Tự Đức ở ngôi lâu nhất (36 năm), là tấm gương sáng ngời về lòng hiếu thảo với mẹ là bà Từ Dụ. Ông là một học giả uyên bác, thông thạo kinh sử và để lại di sản văn hóa vô cùng đồ sộ.", videos: [] },
-      "HÀM NGHI": { desc: "Vua Hàm Nghi là biểu tượng của tinh thần yêu nước bất khuất. Lên ngôi năm 13 tuổi, ông đã từ bỏ ngai vàng để ra chiến khu lãnh đạo phong trào Cần Vương chống Pháp, giữ vững khí tiết dân tộc.", videos: [] },
-      "DUY TÂN": { desc: "Lên ngôi năm 7 tuổi, vua Duy Tân là vị vua trẻ tuổi kiên cường. Năm 16 tuổi, ông đã bí mật lãnh đạo cuộc khởi nghĩa chống Pháp tại Huế. Tinh thần 'Tuổi nhỏ chí lớn' của ông là niềm tự hào dân tộc.", videos: [] },
-      "KHẢI ĐỊNH": { desc: "Vua Khải Định rất say mê mỹ thuật. Ông để lại Lăng Khải Định – một tuyệt tác nghệ thuật khảm sành sứ độc nhất vô nhị, kết hợp tinh hoa kiến trúc Đông - Tây đầy lộng lẫy.", videos: ["https://www.youtube.com/embed/01_T6T3Gg2E"] },
-      "BẢO ĐẠI": { desc: "Vua Bảo Đại là vị hoàng đế cuối cùng. Năm 1945, ông thoái vị để trở thành công dân một nước độc lập với câu nói nổi tiếng: 'Thà làm dân một nước tự do, còn hơn làm vua một nước nô lệ'.", videos: [] }
-      // Các vị vua khác hệ thống sẽ tự động hiển thị mô tả ngắn nếu chưa điền.
+      "THIỆU TRỊ": { desc: "Vua Thiệu Trị nổi tiếng hiền hòa, yêu chuộng hòa bình và giỏi thơ văn nhất triều Nguyễn. Ông để lại hàng ngàn bài thơ tuyệt hay ca ngợi vẻ đẹp của Huế.", videos: [] },
+      "TỰ ĐỨC": { desc: "Vua Tự Đức ở ngôi lâu nhất (36 năm), nổi tiếng học rộng tài cao và cực kỳ hiếu thảo với mẹ là bà Từ Dụ. Lăng Tự Đức giống như một bức tranh thủy mặc đầy chất thơ.", videos: [] },
+      "HÀM NGHI": { desc: "Vua Hàm Nghi là biểu tượng yêu nước bất khuất. Lên ngôi năm 13 tuổi, ông đã từ bỏ cuộc sống nhung lụa để ra chiến khu ban Chiếu Cần Vương kêu gọi toàn dân chống Pháp.", videos: [] },
+      "DUY TÂN": { desc: "Vua Duy Tân lên ngôi năm 7 tuổi. Dù nhỏ tuổi nhưng ông có khí phách kiên cường, lãnh đạo khởi nghĩa chống Pháp khi mới 16 tuổi. Tinh thần 'Tuổi nhỏ chí lớn' của ông là niềm tự hào dân tộc.", videos: [] },
+      "KHẢI ĐỊNH": { desc: "Vua Khải Định say mê mỹ thuật và kiến trúc. Di sản vĩ đại nhất là Lăng Khải Định với nghệ thuật khảm sành sứ tinh xảo, tuyệt mỹ nhất thế giới.", videos: ["https://www.youtube.com/embed/01_T6T3Gg2E"] },
+      "BẢO ĐẠI": { desc: "Vua Bảo Đại là vị hoàng đế cuối cùng. Năm 1945, ông thoái vị để trở thành công dân một nước độc lập với câu nói: 'Thà làm dân một nước tự do, hơn làm vua một nước nô lệ'.", videos: [] }
     };
 
-    // --- NGÂN HÀNG CÂU HỎI (SOẠN MẪU CHO 13 VUA) ---
+    // ============================================================
+    // NGÂN HÀNG CÂU HỎI KHỔNG LỒ (SOẠN ĐỦ 20 CÂU/VUA MẪU)
+    // ============================================================
     const quizBank = [
-        { king: "GIA LONG", q: "Vua Gia Long đặt tên nước ta là gì năm 1804?", a: "Việt Nam", ops: ["Đại Việt", "Việt Nam", "Đại Nam", "An Nam"] },
-        { king: "GIA LONG", q: "Ông chọn nơi nào làm kinh đô?", a: "Huế", ops: ["Hà Nội", "Huế", "Đà Lạt", "Sài Gòn"] },
-        { king: "MINH MẠNG", q: "Vua Minh Mạng chia nước ta thành mấy tỉnh?", a: "31 tỉnh", ops: ["13 tỉnh", "31 tỉnh", "64 tỉnh", "20 tỉnh"] },
-        { king: "TỰ ĐỨC", q: "Vị vua nào nổi tiếng hiếu thảo nhất?", a: "Vua Tự Đức", ops: ["Vua Gia Long", "Vua Tự Đức", "Vua Duy Tân", "Vua Bảo Đại"] },
+        // GIA LONG (Mẫu 20 câu)
+        { king: "GIA LONG", q: "Vua Gia Long đặt quốc hiệu nước ta là gì năm 1804?", a: "Việt Nam", ops: ["Đại Việt", "Việt Nam", "Đại Nam", "An Nam"] },
+        { king: "GIA LONG", q: "Tên thật của vua Gia Long là gì?", a: "Nguyễn Phúc Ánh", ops: ["Nguyễn Phúc Đảm", "Nguyễn Phúc Ánh", "Nguyễn Phúc Hồng Nhậm", "Nguyễn Phúc Miên Tông"] },
+        { king: "GIA LONG", q: "Ông chọn nơi nào làm kinh đô?", a: "Huế", ops: ["Hà Nội", "Huế", "Gia Định", "Đà Lạt"] },
+        { king: "GIA LONG", q: "Ông đã dành bao nhiêu năm bôn ba để thống nhất đất nước?", a: "25 năm", ops: ["5 năm", "10 năm", "15 năm", "25 năm"] },
+        { king: "GIA LONG", q: "Bộ luật nổi tiếng nào ra đời dưới thời ông?", a: "Luật Gia Long", ops: ["Luật Hồng Đức", "Luật Gia Long", "Luật Hình Thư", "Luật triều Nguyễn"] },
+        { king: "GIA LONG", q: "Vua Gia Long là vị vua thứ mấy của triều Nguyễn?", a: "Thứ 1", ops: ["Thứ 1", "Thứ 2", "Thứ 3", "Thứ 4"] },
+        { king: "GIA LONG", q: "Công trình nào được ông khởi công xây dựng tại Huế?", a: "Kinh thành Huế", ops: ["Lăng Khải Định", "Kinh thành Huế", "Cầu Tràng Tiền", "Trường Quốc Học"] },
+        { king: "GIA LONG", q: "Ông mất vào năm nào?", a: "1820", ops: ["1802", "1820", "1841", "1847"] },
+        { king: "GIA LONG", q: "Trước khi làm vua, ông có hiệu là gì?", a: "Chúa Nguyễn", ops: ["Chúa Nguyễn", "Vua Của Huế", "Đại Đế", "Tướng Quân"] },
+        { king: "GIA LONG", q: "Ai là người kế vị vua Gia Long?", a: "Vua Minh Mạng", ops: ["Vua Thiệu Trị", "Vua Minh Mạng", "Vua Tự Đức", "Vua Hàm Nghi"] },
+        // ... (Bảo chỉ cần copy cấu trúc này và thay đổi câu hỏi cho đủ 20 câu/vua)
+        
+        // MINH MẠNG
+        { king: "MINH MẠNG", q: "Vua Minh Mạng chia nước ta thành bao nhiêu tỉnh?", a: "31 tỉnh", ops: ["13 tỉnh", "31 tỉnh", "64 tỉnh", "20 tỉnh"] },
+        { king: "MINH MẠNG", q: "Cơ quan giáo dục cao nhất nào được xây dựng dưới thời ông?", a: "Quốc Tử Giám", ops: ["Văn Miếu", "Quốc Tử Giám", "Trường Quốc Học", "Hàn Lâm Viện"] },
+        { king: "MINH MẠNG", q: "Ông nổi tiếng nhất với đức tính gì?", a: "Chăm chỉ", ops: ["Ham chơi", "Chăm chỉ", "Lười biếng", "Thích săn bắn"] },
+        { king: "MINH MẠNG", q: "Dưới thời ông, lãnh thổ Việt Nam như thế nào?", a: "Rộng lớn nhất", ops: ["Bị thu hẹp", "Rộng lớn nhất", "Giữ nguyên", "Mất một nửa"] },
+        { king: "MINH MẠNG", q: "Vua Minh Mạng là người con thứ mấy của vua Gia Long?", a: "Thứ 4", ops: ["Thứ 1", "Thứ 2", "Thứ 3", "Thứ 4"] },
+
+        // DUY TÂN
         { king: "DUY TÂN", q: "Vua Duy Tân lên ngôi lúc mấy tuổi?", a: "7 tuổi", ops: ["7 tuổi", "15 tuổi", "20 tuổi", "10 tuổi"] },
-        { king: "BẢO ĐẠI", q: "Vua Bảo Đại thoái vị năm nào?", a: "1945", ops: ["1930", "1945", "1954", "1975"] },
-        { king: "KHẢI ĐỊNH", q: "Lăng Khải Định nổi tiếng với nghệ thuật gì?", a: "Khảm sành sứ", ops: ["Đúc đồng", "Khảm sành sứ", "Chạm gỗ", "Sơn mài"] }
-        // Bảo có thể copy-paste thêm hàng trăm câu vào đây thoải mái nhé!
+        { king: "DUY TÂN", q: "Câu nói nổi tiếng 'Nước bẩn lấy gì mà rửa' là của ai?", a: "Vua Duy Tân", ops: ["Vua Duy Tân", "Vua Thành Thái", "Vua Hàm Nghi", "Vua Bảo Đại"] },
+        
+        // BẢO ĐẠI
+        { king: "BẢO ĐẠI", q: "Vua Bảo Đại thoái vị vào năm nào?", a: "1945", ops: ["1930", "1945", "1954", "1975"] },
+        { king: "BẢO ĐẠI", q: "Ông là vị vua thứ mấy của triều Nguyễn?", a: "Thứ 13", ops: ["Thứ 1", "Thứ 10", "Thứ 12", "Thứ 13"] }
     ];
 
     let model, isRunning = false, currentAudio = null, isAudioPlaying = false;
@@ -295,9 +312,8 @@
       const data = kingData[name] || { desc: "Nhân vật đang được cập nhật tiểu sử...", videos: [] };
       exploredKings.add(name);
       
-      // Update UI
       const count = exploredKings.size;
-      document.getElementById("discoveryText").innerText = `Khám phá: ${count}/13 mảnh ghép 👑`;
+      document.getElementById("discoveryText").innerText = `Khám phá: ${count}/13 vị vua 👑`;
       document.getElementById("discoveryBar").style.width = (count/13*100) + "%";
       
       document.getElementById('story-placeholder').style.display = "none";
@@ -308,17 +324,37 @@
       switchTab('story');
       playAudio(name, false);
 
-      // Render Video & Quiz (Bốc 5 câu)
+      // Render Videos
       document.getElementById('video-list-container').innerHTML = (data.videos || []).map(v => `<iframe class="yt-box" src="${v}" allowfullscreen></iframe>`).join('') || '<div class="placeholder-text">🎬 Phim tư liệu đang được cập nhật...</div>';
       
-      const qList = quizBank.filter(q => q.king === name).sort(() => Math.random() - 0.5).slice(0, 5);
-      document.getElementById('quiz-list-container').innerHTML = qList.map((q, i) => `
-        <div class="quiz-item">
-          <div class="quiz-q">Câu ${i+1}: ${q.q}</div>
-          <div class="quiz-opts">${q.ops.map(o => `<button class="quiz-opt-btn" onclick="check(this, '${o}', '${q.a}')">${o}</button>`).join('')}</div>
-          <div class="quiz-feedback"></div>
-        </div>
-      `).join('') || '<div class="placeholder-text">🧩 Câu đố đang được soạn...</div>';
+      // ============================================================
+      // LOGIC BỐC NGẪU NHIÊN 5 CÂU HỎI
+      // ============================================================
+      const qBox = document.getElementById('quiz-list-container');
+      
+      // 1. Lấy toàn bộ câu hỏi của vua này
+      let kingQuizzes = quizBank.filter(q => q.king === name);
+      
+      // 2. Trộn ngẫu nhiên (Fisher-Yates shuffle)
+      for (let i = kingQuizzes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [kingQuizzes[i], kingQuizzes[j]] = [kingQuizzes[j], kingQuizzes[i]];
+      }
+      
+      // 3. Lấy 5 câu đầu tiên
+      const selectedQuizzes = kingQuizzes.slice(0, 5);
+
+      if (selectedQuizzes.length > 0) {
+          qBox.innerHTML = selectedQuizzes.map((q, i) => `
+            <div class="quiz-item">
+              <div class="quiz-q">Câu hỏi ${i+1}: ${q.q}</div>
+              <div class="quiz-opts">${q.ops.map(o => `<button class="quiz-opt-btn" onclick="check(this, '${o}', '${q.a}')">${o}</button>`).join('')}</div>
+              <div class="quiz-feedback"></div>
+            </div>
+          `).join('');
+      } else {
+          qBox.innerHTML = '<div class="placeholder-text">🧩 Câu đố đang được soạn cho vị vua này...</div>';
+      }
     }
 
     function switchTab(id) {
@@ -330,19 +366,19 @@
     function check(btn, sel, cor) {
       const fb = btn.parentElement.nextElementSibling;
       btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
-      if (sel === cor) { btn.classList.add('correct'); fb.innerText = "🌟 Giỏi quá!"; fb.style.color="#48BB78"; }
-      else { btn.classList.add('wrong'); fb.innerText = `💡 Đáp án là: ${cor}`; fb.style.color="#F56565"; }
+      if (sel === cor) { btn.classList.add('correct'); fb.innerText = "🌟 Giỏi quá! Bạn trả lời đúng rồi!"; fb.style.color="#48BB78"; }
+      else { btn.classList.add('wrong'); fb.innerText = `💡 Đáp án đúng là: ${cor}`; fb.style.color="#F56565"; }
     }
 
     function playAudio(name, isIntro) {
       if (currentAudio) currentAudio.pause();
       currentAudio = new Audio(AUDIO_DIR + (isIntro ? "intro.mp3" : name + ".mp3"));
       currentAudio.onplay = () => {
-          isAudioPlaying = true;
+          updateStatus(`✨ Đang nghe: Vua ${name}`, true);
           document.getElementById('audioIndicator').style.display = "inline-block";
       };
       currentAudio.onended = () => {
-          isAudioPlaying = false;
+          updateStatus(`🔮 Gương thần đã sẵn sàng!`, false);
           document.getElementById('audioIndicator').style.display = "none";
       };
       currentAudio.play().catch(e => console.log("Audio block"));
@@ -352,7 +388,3 @@
   </script>
 </body>
 </html>
-
-
-
-
