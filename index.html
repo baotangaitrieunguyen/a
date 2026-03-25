@@ -181,7 +181,7 @@
         </div>
 
         <div id="tab-video" class="tab-content">
-            <div id="video-list-container" class="video-grid"></div>
+            <div id="video-list-container" class="video-grid"><div class="placeholder-text">🎬 Hãy quét thẻ vua, rồi bấm sang tab Thước Phim để xem clip lăng tương ứng.</div></div>
         </div>
 
         <div id="tab-quiz" class="tab-content">
@@ -342,7 +342,46 @@
       return url;
     }
 
-    function triggerDiscovery(name) {
+    
+    function withAutoplay(url) {
+      const embed = toEmbedUrl(url);
+      if (!embed) return "";
+      try {
+        const u = new URL(embed, window.location.href);
+        u.searchParams.set("autoplay", "1");
+        u.searchParams.set("mute", "1");
+        u.searchParams.set("rel", "0");
+        return u.toString();
+      } catch (e) {
+        const sep = embed.includes("?") ? "&" : "?";
+        return embed + sep + "autoplay=1&mute=1&rel=0";
+      }
+    }
+
+    function renderVideoTab(autoplay = false) {
+      const urls = currentVideoUrls || [];
+      const container = document.getElementById('video-list-container');
+      if (!container) return;
+
+      if (!urls.length) {
+        container.innerHTML = '<div class="placeholder-text">🎬 Chưa có clip cho vị vua này.</div>';
+        return;
+      }
+
+      container.innerHTML = urls.map((v, i) => `
+        <iframe
+          class="yt-box"
+          src="${autoplay && i === 0 ? withAutoplay(v) : toEmbedUrl(v)}"
+          title="Video tư liệu về lăng vua"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      `).join('');
+    }
+
+function triggerDiscovery(name) {
       const data = kingData[name] || { desc: "Đang cập nhật tiểu sử...", videos: [] };
       exploredKings.add(name);
       
@@ -358,20 +397,26 @@
       switchTab('story');
       playAudio(name, false);
 
-      // Render Video
-      const videoHtml = (data.videos || []).map(v => `
-        <iframe
-          class="yt-box"
-          src="${toEmbedUrl(v)}"
-          title="Video tư liệu về lăng vua"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-      `).join('') || '<div class="placeholder-text">🎬 Video lăng vua đang được cập nhật...</div>';
-      document.getElementById('video-list-container').innerHTML = videoHtml;
-      document.getElementById('story-video-container').innerHTML = videoHtml;
+      currentVideoUrls = data.videos || [];
+      renderVideoTab(false);
+      const storyBox = document.getElementById('story-video-container');
+      if (storyBox) {
+        if (!currentVideoUrls.length) {
+          storyBox.innerHTML = '<div class="placeholder-text">🎬 Chưa có clip cho vị vua này.</div>';
+        } else {
+          storyBox.innerHTML = currentVideoUrls.slice(0, 1).map(v => `
+            <iframe
+              class="yt-box"
+              src="${toEmbedUrl(v)}"
+              title="Video tư liệu về lăng vua"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen>
+            </iframe>
+          `).join('');
+        }
+      }
       
       // Render Quiz (Logic bốc 5 câu ngẫu nhiên)
       const qList = quizBank.filter(q => q.king === name).sort(() => Math.random() - 0.5).slice(0, 5);
@@ -388,12 +433,16 @@
     function switchTab(id) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      
+
       const targetTab = document.getElementById('tab-' + id);
       const targetBtn = document.getElementById('btn-tab-' + id);
-      
+
       if (targetTab) targetTab.classList.add('active');
       if (targetBtn) targetBtn.classList.add('active');
+
+      if (id === 'video') {
+        renderVideoTab(true);
+      }
     }
 
     function check(btn, sel, cor) {
