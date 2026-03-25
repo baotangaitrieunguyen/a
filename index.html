@@ -167,21 +167,13 @@
                 <h2 class="king-name" id="artifactName">Tên Vua</h2>
                 <span class="speaker-icon" id="audioIndicator" style="animation: pulse 1s infinite;" onclick="replayAudio()">🔊</span>
               </div>
-              <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 25px; align-items:start;">
-                <div>
-                  <div class="desc-box" id="desc">Nội dung...</div>
-                  <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
-                </div>
-                <div>
-                  <div style="font-weight:800; color:var(--royal-blue); font-size:1.15rem; margin-bottom:12px;">🎬 Video về lăng của vị vua này</div>
-                  <div id="story-video-container" class="video-grid" style="grid-template-columns:1fr;"></div>
-                </div>
-              </div>
+              <div class="desc-box" id="desc">Nội dung...</div>
+              <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
           </div>
         </div>
 
         <div id="tab-video" class="tab-content">
-            <div id="video-list-container" class="video-grid"><div class="placeholder-text">🎬 Hãy quét thẻ vua, rồi bấm sang tab Thước Phim để xem clip lăng tương ứng.</div></div>
+            <div id="video-list-container" class="video-grid"><div class="placeholder-text">🎬 Hãy quét một vị vua để xem thước phim tương ứng nhé!</div></div>
         </div>
 
         <div id="tab-quiz" class="tab-content">
@@ -242,6 +234,7 @@
     let model, isRunning = false, currentAudio = null, isAudioPlaying = false;
     let trackingLabel = "", stableCount = 0, lastCommittedKing = "";
     let exploredKings = new Set();
+    let currentVideoUrls = [];
 
     // --- KHỞI ĐỘNG ---
     window.onload = () => {
@@ -311,125 +304,89 @@
       requestAnimationFrame(predictLoop);
     }
 
-    function toEmbedUrl(url) {
+    function toEmbedUrl(url, autoplay = false) {
       if (!url) return "";
       try {
-        const u = new URL(url, window.location.href);
+        const parsed = new URL(url, window.location.href);
+        let videoId = "";
 
-        if (u.hostname.includes("youtube.com") && u.pathname.startsWith("/embed/")) {
-          return url;
+        if (parsed.hostname.includes("youtu.be")) {
+          videoId = parsed.pathname.replace(/^\//, "").split("/")[0];
+        } else if (parsed.hostname.includes("youtube.com")) {
+          if (parsed.pathname.startsWith("/embed/")) {
+            videoId = parsed.pathname.split("/embed/")[1].split("/")[0];
+          } else {
+            videoId = parsed.searchParams.get("v") || "";
+          }
         }
 
-        if (u.hostname.includes("youtu.be")) {
-          const id = u.pathname.replace(/^\//, "").split("/")[0];
-          return id ? `https://www.youtube.com/embed/${id}` : url;
-        }
+        if (!videoId) return url;
 
-        if (u.hostname.includes("youtube.com")) {
-          const id = u.searchParams.get("v");
-          if (id) return `https://www.youtube.com/embed/${id}`;
+        const embed = new URL(`https://www.youtube.com/embed/${videoId}`);
+        embed.searchParams.set("rel", "0");
+        embed.searchParams.set("modestbranding", "1");
+        if (autoplay) {
+          embed.searchParams.set("autoplay", "1");
+          embed.searchParams.set("mute", "1");
         }
-
-        return url;
+        return embed.toString();
       } catch (e) {
         return url;
       }
     }
-      if (url.includes("youtu.be/")) {
-        const id = url.split("youtu.be/")[1].split("?")[0];
-        return `https://www.youtube.com/embed/${id}`;
-      }
-      return url;
-    }
 
-    
-    function withAutoplay(url) {
-      const embed = toEmbedUrl(url);
-      if (!embed) return "";
-      try {
-        const u = new URL(embed, window.location.href);
-        u.searchParams.set("autoplay", "1");
-        u.searchParams.set("mute", "1");
-        u.searchParams.set("rel", "0");
-        return u.toString();
-      } catch (e) {
-        const sep = embed.includes("?") ? "&" : "?";
-        return embed + sep + "autoplay=1&mute=1&rel=0";
-      }
-    }
-
-    function renderVideoTab(autoplay = false) {
-      const urls = currentVideoUrls || [];
+    function renderVideoTab(autoplayFirst = false) {
       const container = document.getElementById('video-list-container');
       if (!container) return;
 
-      if (!urls.length) {
-        container.innerHTML = '<div class="placeholder-text">🎬 Chưa có clip cho vị vua này.</div>';
+      if (!currentVideoUrls.length) {
+        container.innerHTML = '<div class="placeholder-text">🎬 Phim tư liệu đang được cập nhật...</div>';
         return;
       }
 
-      container.innerHTML = urls.map((v, i) => `
+      container.innerHTML = currentVideoUrls.map((v, index) => `
         <iframe
           class="yt-box"
-          src="${autoplay && i === 0 ? withAutoplay(v) : toEmbedUrl(v)}"
-          title="Video tư liệu về lăng vua"
+          src="${toEmbedUrl(v, autoplayFirst && index === 0)}"
+          title="Thước phim tư liệu"
           frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="${autoplayFirst && index === 0 ? 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' : 'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'}"
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen>
         </iframe>
       `).join('');
     }
 
-function triggerDiscovery(name) {
+    function triggerDiscovery(name) {
       const data = kingData[name] || { desc: "Đang cập nhật tiểu sử...", videos: [] };
       exploredKings.add(name);
-      
+
       const count = exploredKings.size;
       document.getElementById("discoveryText").innerText = `Khám phá: ${count}/13 mảnh ghép 👑`;
       document.getElementById("discoveryBar").style.width = (count/13*100) + "%";
-      
+
       document.getElementById('story-placeholder').style.display = "none";
       document.getElementById('story-data').style.display = "block";
       document.getElementById('artifactName').innerText = "VUA " + name;
       document.getElementById('desc').innerText = data.desc;
 
+      currentVideoUrls = data.videos || [];
+      renderVideoTab(false);
+
       switchTab('story');
       playAudio(name, false);
 
-      currentVideoUrls = data.videos || [];
-      renderVideoTab(false);
-      const storyBox = document.getElementById('story-video-container');
-      if (storyBox) {
-        if (!currentVideoUrls.length) {
-          storyBox.innerHTML = '<div class="placeholder-text">🎬 Chưa có clip cho vị vua này.</div>';
-        } else {
-          storyBox.innerHTML = currentVideoUrls.slice(0, 1).map(v => `
-            <iframe
-              class="yt-box"
-              src="${toEmbedUrl(v)}"
-              title="Video tư liệu về lăng vua"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen>
-            </iframe>
-          `).join('');
-        }
-      }
-      
       // Render Quiz (Logic bốc 5 câu ngẫu nhiên)
       const qList = quizBank.filter(q => q.king === name).sort(() => Math.random() - 0.5).slice(0, 5);
       document.getElementById('quiz-list-container').innerHTML = qList.map((q, i) => `
         <div class="quiz-item">
           <div class="quiz-q">Câu ${i+1}: ${q.q}</div>
-          <div class="quiz-opts">${q.ops.map(o => `<button class="quiz-opt-btn" onclick="check(this, '${o}', '${q.a}')">${o}</button>`).join('')}</div>
+          <div class="quiz-opts">${q.ops.map(o => `<button class="quiz-opt-btn" onclick="check(this, ${JSON.stringify(o)}, ${JSON.stringify(q.a)})">${o}</button>`).join('')}</div>
           <div class="quiz-feedback"></div>
         </div>
       `).join('') || '<div class="placeholder-text">🧩 Câu đố vui đang được soạn cho vị vua này...</div>';
     }
 
-    // FIX LỖI CRASH TRÌNH DUYỆT
     function switchTab(id) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
