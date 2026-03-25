@@ -167,8 +167,16 @@
                 <h2 class="king-name" id="artifactName">Tên Vua</h2>
                 <span class="speaker-icon" id="audioIndicator" style="animation: pulse 1s infinite;" onclick="replayAudio()">🔊</span>
               </div>
-              <div class="desc-box" id="desc">Nội dung...</div>
-              <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
+              <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 25px; align-items:start;">
+                <div>
+                  <div class="desc-box" id="desc">Nội dung...</div>
+                  <button onclick="replayAudio()" style="margin-top:30px; padding:15px 30px; border-radius:15px; border:3px solid var(--royal-gold); background:#FFF; font-weight:800; cursor:pointer; color:var(--wood)">🎧 Nghe lại lời kể</button>
+                </div>
+                <div>
+                  <div style="font-weight:800; color:var(--royal-blue); font-size:1.15rem; margin-bottom:12px;">🎬 Video về lăng của vị vua này</div>
+                  <div id="story-video-container" class="video-grid" style="grid-template-columns:1fr;"></div>
+                </div>
+              </div>
           </div>
         </div>
 
@@ -192,36 +200,23 @@
     const kingData = {
       "GIA LONG": {
         desc: "Vua Gia Long (tên thật là Nguyễn Phúc Ánh) là vị hoàng đế đầu tiên khai sáng triều đại nhà Nguyễn – triều đại phong kiến cuối cùng của dân tộc Việt Nam vào năm 1802.\n\nSau 25 năm bôn ba gian khổ chiến đấu trên khắp mọi miền Tổ quốc để thống nhất sơn hà, ông đã lên ngôi và đến năm 1804, ông chính thức đặt quốc hiệu nước ta là VIỆT NAM. Với tầm nhìn của một nhà quân sự lỗi lạc, ông đã chọn vùng đất Phú Xuân (Huế) làm kinh đô và tự tay khởi công xây dựng Kinh thành Huế hùng vĩ, vĩ đại mà ngày nay chúng ta vẫn được chiêm ngưỡng.\n\nVua Gia Long không chỉ giỏi cầm quân mà còn rất quan tâm đến luật pháp. Ông ban hành bộ luật Gia Long nổi tiếng để giúp xã hội ổn định, đất nước đi vào nề nếp. Câu chuyện về Vua Gia Long chính là bài học lớn lao về lòng kiên trì và ý chí sắt đá: Dù gặp hàng vạn nghịch cảnh, chỉ cần bạn giữ vững niềm tin và không bao giờ bỏ cuộc, thành công nhất định sẽ mỉm cười!",
-        videos: ["https://www.youtube.com/embed/zH0110z4Eic"]
+        videos: ["https://youtu.be/CtrJRIoEv9I?si=Ymw_kpG-r02gIGB_", "https://youtu.be/LRvWKrYse5A"]
       },
       "MINH MẠNG": {
         desc: "Vua Minh Mạng là vị hoàng đế thứ hai của triều Nguyễn, được mệnh danh là một trong những vị vua tài giỏi, quyết đoán và chăm chỉ nhất lịch sử phong kiến Việt Nam.\n\nDưới thời trị vì lẫy lừng của ông, lãnh thổ Việt Nam đạt đến quy mô rộng lớn và hùng mạnh nhất khu vực. Ông là một nhà cải cách vĩ đại khi quyết định chia đất nước thành 31 tỉnh để dễ dàng quản lý, giúp cuộc sống người dân trở nên ổn định và văn minh hơn. Vua Minh Mạng nổi tiếng là người cực kỳ hiếu học, ông thường thức khuya dậy sớm để trực tiếp phê duyệt tấu chương và say mê nghiên cứu sách vở.\n\nÔng đã cho xây dựng Quốc Tử Giám tại Huế để đào tạo nhân tài và thường xuyên tổ chức các kỳ thi tài hoa để tìm người giỏi giúp nước. Lăng Minh Mạng do ông khởi công là một kiệt tác kiến trúc, nơi vẻ đẹp của những công trình đá chạm khắc tinh xảo hòa quyện hoàn hảo với cảnh sắc thiên nhiên sơn thủy hữu tình.",
-        videos: ["https://www.youtube.com/embed/p1pE_H5b5lM"]
+        videos: ["https://www.youtube.com/watch?si=TV4JKDqTwdNMvJu0&v=3mdeCRzfMBQ&feature=youtu.be", "https://www.youtube.com/watch?si=eu--TSx1xZkmV4Ie&v=Rct0b5eu9QA&feature=youtu.be", "https://www.youtube.com/watch?si=_mm_Ulw5rxpMhxNx&v=tJkv6c4VMHs&feature=youtu.be"]
       },
-      "THIỆU TRỊ": { desc: "Vua Thiệu Trị nổi tiếng là vị vua hiền hòa, nhân từ và giỏi thơ văn nhất triều Nguyễn. Ông giữ cho đất nước thái bình và để lại tập thơ 'Thần kinh nhị thập cảnh' ca ngợi vẻ đẹp thần tiên của Huế.", videos: [] },
-      "TỰ ĐỨC": { desc: "Vua Tự Đức là vị vua ở ngôi lâu nhất (36 năm). Ông nổi tiếng học rộng tài cao và là tấm gương sáng ngời về lòng hiếu thảo đối với mẹ mình là bà Từ Dụ. Lăng Tự Đức giống như một bài thơ cổ kính giữa rừng thông thơ mộng.", videos: [] },
-      "DỤC ĐỨC": { desc: "Vua Dục Đức lên ngôi năm 1883 nhưng chỉ tại vị trong 3 ngày ngắn ngủi. Cuộc đời ông là một nốt trầm buồn phản ánh bối cảnh lịch sử phức tạp lúc bấy giờ.", videos: [] },
-      "HIỆP HÒA": { desc: "Vua Hiệp Hòa trị vì đất nước trong 4 tháng giữa lúc triều đình đầy biến động. Ông nỗ lực duy trì sự ổn định cho đất nước trước áp lực của thực dân Pháp.", videos: [] },
-      "KIẾN PHÚC": { desc: "Vua Kiến Phúc lên ngôi khi mới 15 tuổi. Dù thời gian trị vì ngắn ngủi (8 tháng), ông đã thể hiện tư chất của một vị vua trẻ đĩnh đạc và có trách nhiệm.", videos: [] },
-      "HÀM NGHI": { desc: "Vua Hàm Nghi là biểu tượng của tinh thần yêu nước bất khuất. Lên ngôi năm 13 tuổi, ông đã từ bỏ cung điện vàng son để ra chiến khu, ban Chiếu Cần Vương kêu gọi toàn dân chống Pháp.", videos: [] },
-      "ĐỒNG KHÁNH": { desc: "Vua Đồng Khánh trị vì trong giai đoạn giao thoa văn hóa Đông - Tây. Ông cố gắng duy trì các nghi lễ truyền thống hoàng gia tại Huế giữa muôn vàn thử thách.", videos: [] },
-      "THÀNH THÁI": { desc: "Vua Thành Thái là vị vua có tư tưởng tiến bộ, thích tìm hiểu khoa học, học lái xe hơi và cắt tóc ngắn. Vì tinh thần chống Pháp mạnh mẽ, ông đã bị ép phải thoái vị.", videos: [] },
-      "DUY TÂN": { desc: "Vua Duy Tân lên ngôi năm 7 tuổi. Tuy nhỏ tuổi nhưng ông có chí lớn và khí phách kiên cường, lãnh đạo khởi nghĩa chống Pháp tại kinh thành Huế khi mới 16 tuổi.", videos: [] },
-      "KHẢI ĐỊNH": { desc: "Vua Khải Định là người đam mê mỹ thuật. Ông để lại di sản vô giá là Lăng Khải Định – một kiệt tác kiến trúc khảm sành sứ độc đáo kết hợp tinh hoa Đông - Tây.", videos: ["https://www.youtube.com/embed/01_T6T3Gg2E"] },      "LĂNG VUA GIA LONG": { desc: "Lăng vua Gia Long là nơi an nghỉ của vị hoàng đế khai sáng triều Nguyễn. Không gian nơi đây rộng lớn, hài hòa với núi đồi và sông nước, thể hiện vẻ uy nghiêm và tầm vóc mở đầu của cả một triều đại.", videos: ["https://youtu.be/CtrJRIoEv9I?si=Ymw_kpG-r02gIGB_", "https://youtu.be/LRvWKrYse5A"] },
-      "LĂNG VUA MINH MẠNG": { desc: "Lăng vua Minh Mạng là một trong những lăng tẩm đẹp và cân đối bậc nhất triều Nguyễn. Công trình nổi bật bởi sự hài hòa giữa kiến trúc và thiên nhiên, như một bức tranh sơn thủy đầy thơ mộng.", videos: ["https://www.youtube.com/watch?si=TV4JKDqTwdNMvJu0&v=3mdeCRzfMBQ&feature=youtu.be", "https://www.youtube.com/watch?si=eu--TSx1xZkmV4Ie&v=Rct0b5eu9QA&feature=youtu.be", "https://www.youtube.com/watch?si=_mm_Ulw5rxpMhxNx&v=tJkv6c4VMHs&feature=youtu.be"] },
-      "LĂNG VUA TỰ ĐỨC": { desc: "Lăng vua Tự Đức mang vẻ đẹp trầm lắng, thi vị giữa rừng thông và hồ nước yên bình. Đây không chỉ là nơi an nghỉ mà còn giống như một bài thơ cổ kính, phản ánh tâm hồn yêu văn chương của nhà vua.", videos: ["https://www.youtube.com/watch?si=RrcNf5ggvhskpQCp&v=CSuzMu502Kk&feature=youtu.be", "https://youtu.be/axtSLeaoxq0?si=KU-7GMzHXYpLn4bb"] },
-      "LĂNG VUA THIỆU TRỊ": { desc: "Lăng vua Thiệu Trị có phong cách thanh nhã, giản dị mà trang nghiêm. Công trình góp phần làm nên vẻ đẹp riêng của quần thể di tích cố đô Huế.", videos: ["https://youtu.be/4J9ecq6iCvM?si=0_2AQZuFPJk3FxDX", "https://youtu.be/S24zHjeGc9s?si=Rp-FDTaglcWiPTOC"] },
-      "LĂNG VUA DỤC ĐỨC": { desc: "Lăng vua Dục Đức gắn với cuộc đời ngắn ngủi nhưng nhiều biến động của nhà vua. Nơi đây lưu giữ một dấu lặng đặc biệt trong dòng lịch sử triều Nguyễn.", videos: ["https://youtu.be/xfr4jvToIgc?si=2GAY-RZgPdAr0g43", "https://youtu.be/UzhMRSJqNyo?si=uLji8K0otlbvhbdF"] },
-      "LĂNG VUA HIỆP HÒA": { desc: "Khu lăng liên quan đến vua Hiệp Hòa gợi nhắc giai đoạn đầy biến động của triều Nguyễn. Không gian di tích mang nhiều giá trị lịch sử hơn là sự đồ sộ phô trương.", videos: ["https://youtu.be/qGHeks4pItk?si=ohCO8TPfl6l95lGc", "https://youtu.be/NwQZ9nOVq8w?si=sk2sgj9bl6jp3LCX"] },
-      "LĂNG VUA KIẾN PHÚC": { desc: "Lăng vua Kiến Phúc là dấu tích của một vị vua trẻ trị vì trong thời gian ngắn. Công trình góp phần phản ánh bối cảnh chính trị đặc biệt của cuối thế kỷ XIX.", videos: ["https://youtu.be/xsNO2-Zl8v0?si=aIrpaT7KeWB2UFEd", "https://youtu.be/SUGBhhKEvbw?si=kU2RgHJopPqCqBP6"] },
-      "LĂNG VUA HÀM NGHI": { desc: "Lăng và các dấu tích liên quan đến vua Hàm Nghi luôn gợi nhớ tinh thần yêu nước mạnh mẽ. Đây là điểm chạm lịch sử nhắc về ý chí chống ngoại xâm của một vị vua trẻ.", videos: ["https://youtu.be/LX5BLRt9QTE?si=CcLEtXaklG3poVTI"] },
-      "LĂNG VUA ĐỒNG KHÁNH": { desc: "Lăng vua Đồng Khánh mang nét giao thoa giữa truyền thống và ảnh hưởng mới trong kiến trúc triều Nguyễn. Công trình có giá trị nghệ thuật và lịch sử riêng biệt.", videos: ["https://youtu.be/NoRAicEOCNw?si=j2nzGUMXuBS-RFHJ", "https://youtu.be/Oqfp7qAzzbw?si=iiZ9CqKkw7XPLPQ4"] },
-      "LĂNG VUA THÀNH THÁI": { desc: "Các dấu tích liên quan đến vua Thành Thái gắn với hình ảnh một vị vua tiến bộ và có tư tưởng đổi mới. Không gian di tích giúp người xem hiểu hơn về một giai đoạn nhiều chuyển mình.", videos: ["https://youtu.be/6swMTNe7rxE?si=GQGtKyZitYXe6Eis", "https://youtu.be/LFhWK2rltOY?si=G1757p1bxeiKMulB"] },
-      "LĂNG VUA DUY TÂN": { desc: "Di tích gắn với vua Duy Tân luôn gợi nhớ về chí khí của một vị vua trẻ yêu nước. Đây là một lát cắt lịch sử rất xúc động của triều Nguyễn.", videos: ["https://youtu.be/6swMTNe7rxE?si=fQvno6jULXbL0a-W", "https://youtu.be/LFhWK2rltOY?si=NNOgAIDMnugG5wwn"] },
-      "LĂNG VUA KHẢI ĐỊNH": { desc: "Lăng vua Khải Định nổi bật với nghệ thuật khảm sành sứ và kiến trúc giao thoa Đông – Tây rất độc đáo. Đây là một trong những công trình ấn tượng nhất của quần thể lăng tẩm Huế.", videos: ["https://youtu.be/M3xVooHItpY?si=XNxMpY_XjqPZaCuJ", "https://youtu.be/6OSlbnXmdB8?si=a0rqag3hR6Liub6G"] },
-      "LĂNG VUA BẢO ĐẠI": { desc: "Các công trình gắn với vua Bảo Đại phản ánh giai đoạn cuối của triều Nguyễn và sự chuyển biến mạnh mẽ của lịch sử Việt Nam. Chúng là những tư liệu sống động cho thời kỳ giao thời.", videos: ["https://youtu.be/6pJf6bqoZto?si=S20gJVAiOxHiB2qr", "https://youtu.be/2JbRsbrvSN4?si=vAg4TWSXFheJ5zde"] },
-
-      "BẢO ĐẠI": { desc: "Vua Bảo Đại là hoàng đế cuối cùng. Năm 1945, ông thoái vị để trở thành công dân một nước độc lập với câu nói: 'Thà làm dân một nước tự do, còn hơn làm vua một nước nô lệ'.", videos: [] }
+      "THIỆU TRỊ": { desc: "Vua Thiệu Trị nổi tiếng là vị vua hiền hòa, nhân từ và giỏi thơ văn nhất triều Nguyễn. Ông giữ cho đất nước thái bình và để lại tập thơ 'Thần kinh nhị thập cảnh' ca ngợi vẻ đẹp thần tiên của Huế.", videos: ["https://youtu.be/4J9ecq6iCvM?si=0_2AQZuFPJk3FxDX", "https://youtu.be/S24zHjeGc9s?si=Rp-FDTaglcWiPTOC"] },
+      "TỰ ĐỨC": { desc: "Vua Tự Đức là vị vua ở ngôi lâu nhất (36 năm). Ông nổi tiếng học rộng tài cao và là tấm gương sáng ngời về lòng hiếu thảo đối với mẹ mình là bà Từ Dụ. Lăng Tự Đức giống như một bài thơ cổ kính giữa rừng thông thơ mộng.", videos: ["https://www.youtube.com/watch?si=RrcNf5ggvhskpQCp&v=CSuzMu502Kk&feature=youtu.be", "https://youtu.be/axtSLeaoxq0?si=KU-7GMzHXYpLn4bb"] },
+      "DỤC ĐỨC": { desc: "Vua Dục Đức lên ngôi năm 1883 nhưng chỉ tại vị trong 3 ngày ngắn ngủi. Cuộc đời ông là một nốt trầm buồn phản ánh bối cảnh lịch sử phức tạp lúc bấy giờ.", videos: ["https://youtu.be/xfr4jvToIgc?si=2GAY-RZgPdAr0g43", "https://youtu.be/UzhMRSJqNyo?si=uLji8K0otlbvhbdF"] },
+      "HIỆP HÒA": { desc: "Vua Hiệp Hòa trị vì đất nước trong 4 tháng giữa lúc triều đình đầy biến động. Ông nỗ lực duy trì sự ổn định cho đất nước trước áp lực của thực dân Pháp.", videos: ["https://youtu.be/qGHeks4pItk?si=ohCO8TPfl6l95lGc", "https://youtu.be/NwQZ9nOVq8w?si=sk2sgj9bl6jp3LCX"] },
+      "KIẾN PHÚC": { desc: "Vua Kiến Phúc lên ngôi khi mới 15 tuổi. Dù thời gian trị vì ngắn ngủi (8 tháng), ông đã thể hiện tư chất của một vị vua trẻ đĩnh đạc và có trách nhiệm.", videos: ["https://youtu.be/xsNO2-Zl8v0?si=aIrpaT7KeWB2UFEd", "https://youtu.be/SUGBhhKEvbw?si=kU2RgHJopPqCqBP6"] },
+      "HÀM NGHI": { desc: "Vua Hàm Nghi là biểu tượng của tinh thần yêu nước bất khuất. Lên ngôi năm 13 tuổi, ông đã từ bỏ cung điện vàng son để ra chiến khu, ban Chiếu Cần Vương kêu gọi toàn dân chống Pháp.", videos: ["https://youtu.be/LX5BLRt9QTE?si=CcLEtXaklG3poVTI"] },
+      "ĐỒNG KHÁNH": { desc: "Vua Đồng Khánh trị vì trong giai đoạn giao thoa văn hóa Đông - Tây. Ông cố gắng duy trì các nghi lễ truyền thống hoàng gia tại Huế giữa muôn vàn thử thách.", videos: ["https://youtu.be/NoRAicEOCNw?si=j2nzGUMXuBS-RFHJ", "https://youtu.be/Oqfp7qAzzbw?si=iiZ9CqKkw7XPLPQ4"] },
+      "THÀNH THÁI": { desc: "Vua Thành Thái là vị vua có tư tưởng tiến bộ, thích tìm hiểu khoa học, học lái xe hơi và cắt tóc ngắn. Vì tinh thần chống Pháp mạnh mẽ, ông đã bị ép phải thoái vị.", videos: ["https://youtu.be/6swMTNe7rxE?si=GQGtKyZitYXe6Eis", "https://youtu.be/LFhWK2rltOY?si=G1757p1bxeiKMulB"] },
+      "DUY TÂN": { desc: "Vua Duy Tân lên ngôi năm 7 tuổi. Tuy nhỏ tuổi nhưng ông có chí lớn và khí phách kiên cường, lãnh đạo khởi nghĩa chống Pháp tại kinh thành Huế khi mới 16 tuổi.", videos: ["https://youtu.be/6swMTNe7rxE?si=fQvno6jULXbL0a-W", "https://youtu.be/LFhWK2rltOY?si=NNOgAIDMnugG5wwn"] },
+      "KHẢI ĐỊNH": { desc: "Vua Khải Định là người đam mê mỹ thuật. Ông để lại di sản vô giá là Lăng Khải Định – một kiệt tác kiến trúc khảm sành sứ độc đáo kết hợp tinh hoa Đông - Tây.", videos: ["https://youtu.be/M3xVooHItpY?si=XNxMpY_XjqPZaCuJ", "https://youtu.be/6OSlbnXmdB8?si=a0rqag3hR6Liub6G"] },
+      "BẢO ĐẠI": { desc: "Vua Bảo Đại là hoàng đế cuối cùng. Năm 1945, ông thoái vị để trở thành công dân một nước độc lập với câu nói: 'Thà làm dân một nước tự do, còn hơn làm vua một nước nô lệ'.", videos: ["https://youtu.be/6pJf6bqoZto?si=S20gJVAiOxHiB2qr", "https://youtu.be/2JbRsbrvSN4?si=vAg4TWSXFheJ5zde"] }
     };
 
     // --- NGÂN HÀNG CÂU HỎI KHỔNG LỒ (Hơn 100 câu mẫu) ---
@@ -316,23 +311,32 @@
       requestAnimationFrame(predictLoop);
     }
 
-
     function toEmbedUrl(url) {
       if (!url) return "";
-      if (url.includes("youtube.com/embed/")) return url;
-      if (url.includes("watch?v=")) {
-        const id = url.split("watch?v=")[1].split("&")[0];
-        return `https://www.youtube.com/embed/${id}`;
-      }
-      if (url.includes("youtube.com/watch?")) {
-        try {
-          const u = new URL(url);
+      try {
+        const u = new URL(url, window.location.href);
+
+        if (u.hostname.includes("youtube.com") && u.pathname.startsWith("/embed/")) {
+          return url;
+        }
+
+        if (u.hostname.includes("youtu.be")) {
+          const id = u.pathname.replace(/^\//, "").split("/")[0];
+          return id ? `https://www.youtube.com/embed/${id}` : url;
+        }
+
+        if (u.hostname.includes("youtube.com")) {
           const id = u.searchParams.get("v");
           if (id) return `https://www.youtube.com/embed/${id}`;
-        } catch (e) {}
+        }
+
+        return url;
+      } catch (e) {
+        return url;
       }
+    }
       if (url.includes("youtu.be/")) {
-        const id = url.split("youtu.be/")[1].split("?")[0].split("&")[0];
+        const id = url.split("youtu.be/")[1].split("?")[0];
         return `https://www.youtube.com/embed/${id}`;
       }
       return url;
@@ -355,7 +359,19 @@
       playAudio(name, false);
 
       // Render Video
-      document.getElementById('video-list-container').innerHTML = (data.videos || []).map(v => `<iframe class="yt-box" src="${v}" allowfullscreen></iframe>`).join('') || '<div class="placeholder-text">🎬 Phim tư liệu đang được cập nhật...</div>';
+      const videoHtml = (data.videos || []).map(v => `
+        <iframe
+          class="yt-box"
+          src="${toEmbedUrl(v)}"
+          title="Video tư liệu về lăng vua"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      `).join('') || '<div class="placeholder-text">🎬 Video lăng vua đang được cập nhật...</div>';
+      document.getElementById('video-list-container').innerHTML = videoHtml;
+      document.getElementById('story-video-container').innerHTML = videoHtml;
       
       // Render Quiz (Logic bốc 5 câu ngẫu nhiên)
       const qList = quizBank.filter(q => q.king === name).sort(() => Math.random() - 0.5).slice(0, 5);
